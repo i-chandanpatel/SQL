@@ -5,7 +5,7 @@
 /*
 ISNULL(value, replacement)
 - Replaces NULL with a specified value
-- SQL Server–specific
+- SQL Serverâ€“specific
 */
 
 -- Example:
@@ -110,7 +110,7 @@ CustomerID  FirstName  LastName    FullName
    =========================================================
 - Use COALESCE for cross-database compatibility
 - Use ISNULL when you need strict SQL Server behavior
-- Be careful when replacing NULLs in aggregates — it
+- Be careful when replacing NULLs in aggregates â€” it
   changes business meaning, not just output
 */
 
@@ -205,3 +205,92 @@ JOIN Table2 b
    - NULL values now successfully match
 */
 
+
+/* =========================================================
+   NULLIF and NULL CHECKS
+   ========================================================= */
+
+/*
+NULLIF(expression1, expression2)
+
+- Compares two expressions
+- Returns NULL if expression1 = expression2
+- Returns expression1 if they are NOT equal
+- Commonly used to prevent divide-by-zero errors
+*/
+
+-- Basic examples
+-- NULLIF(5, 5)     -> NULL
+-- NULLIF(5, 10)    -> 5
+-- NULLIF('A','A')  -> NULL
+-- NULLIF('A','B')  -> 'A'
+
+
+/*
+IS NULL / IS NOT NULL
+
+- Used to test whether a value is NULL
+- '=' or '<>' cannot be used to compare NULL values
+- Always use IS NULL or IS NOT NULL
+*/
+
+
+/* =========================================================
+   FIND ROWS WITH NULL VALUES
+   ========================================================= */
+
+SELECT *
+FROM Sales.Customers
+WHERE Score IS NULL;
+
+
+/*
+OUTPUT
+
+CustomerID  FirstName  LastName  Country  Score
+----------  ---------  --------  -------  ------
+5           Anna       Adams     USA      NULL
+*/
+
+
+/* =========================================================
+   PRACTICAL USE CASES
+   ========================================================= */
+
+-- 1. Prevent division by zero
+SELECT
+    CustomerID,
+    Score,
+    Score / NULLIF(Score, 0) AS SafeDivision
+FROM Sales.Customers;
+
+-- If Score = 0 â†’ NULLIF(Score,0) returns NULL
+-- Division by NULL returns NULL instead of an error
+
+
+-- 2. Convert specific values to NULL
+SELECT
+    CustomerID,
+    NULLIF(Country, 'N/A') AS CleanCountry
+FROM Sales.Customers;
+
+-- 'N/A' becomes NULL
+-- Other values remain unchanged
+
+
+-- 3. Combine NULLIF with COALESCE
+SELECT
+    CustomerID,
+    COALESCE(NULLIF(LastName, ''), 'Unknown') AS LastNameCleaned
+FROM Sales.Customers;
+
+-- Empty strings -> NULL -> replaced with 'Unknown'
+
+
+/* =========================================================
+   KEY TAKEAWAYS
+   =========================================================
+- NULLIF helps normalize or eliminate unwanted values
+- IS NULL / IS NOT NULL are the ONLY safe NULL checks
+- NULLIF + COALESCE is a powerful cleanup pattern
+*/
