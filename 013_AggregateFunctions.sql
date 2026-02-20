@@ -8,8 +8,12 @@ From orders
 GROUP BY customer_id
 
 /*
-1	1	35	35	35	35
-2	1	15	15	15	15
-3	1	20	20	20	20
-6	1	10	10	10	10
+Expected Output:
+
+CustomerID | TotalOrders | TotalSales | AvgSales | LowestSales | HighestSales
+-----------|-------------|------------|----------|-------------|--------------
+1          | 1           | 35         | 35       | 35          | 35
+2          | 1           | 15         | 15       | 15          | 15
+3          | 1           | 20         | 20       | 20          | 20
+6          | 1           | 10         | 10       | 10          | 10
 */
