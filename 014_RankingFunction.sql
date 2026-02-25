@@ -134,9 +134,9 @@ OrderID | ProductID | Sales | SalesRank
 
 
 
---use case of the row_number()
+--USE CASE of the row_number()
 
---use case 1: TOP N Analysis
+--USE CASE 1: TOP N Analysis
 
 --Find top highest sales for each product
 SELECT OrderID,ProductID,Sales,
@@ -188,5 +188,52 @@ OrderID | ProductID | Sales | RankByProduct
 10      | 102       | 60    | 1
 6       | 104       | 50    | 1
 4       | 105       | 60    | 1
+*/
+
+
+-- Bottom N Analysis (Raw Ranking)
+SELECT 
+    CustomerID,
+    SUM(Sales) AS TotalSales,
+    ROW_NUMBER() OVER (ORDER BY SUM(Sales)) AS RankCustomers
+FROM Sales.Orders
+GROUP BY CustomerID;
+
+/*
+CustomerID | TotalSales | RankCustomers
+2          | 55         | 1
+4          | 90         | 2
+1          | 110        | 3
+3          | 125        | 4
+*/
+
+
+/*==============================================================
+Goal:
+Identify customers with lowest total sales.
+
+Logic:
+1. Aggregate total sales per customer
+2. Rank customers ascending
+3. Select bottom N
+==============================================================*/
+
+SELECT *
+FROM (
+    SELECT 
+        CustomerID,
+        SUM(Sales) AS TotalSales,
+        ROW_NUMBER() OVER (
+            ORDER BY SUM(Sales) ASC
+        ) AS RankCustomers
+    FROM Sales.Orders
+    GROUP BY CustomerID
+) t
+WHERE RankCustomers <= 2;
+
+/*
+CustomerID | TotalSales | RankCustomers
+2          | 55         | 1
+4          | 90         | 2
 */
 
