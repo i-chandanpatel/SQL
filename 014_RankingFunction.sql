@@ -132,3 +132,61 @@ OrderID | ProductID | Sales | SalesRank
 1       | 101       | 10    | 8
 */
 
+
+
+--use case of the row_number()
+
+--use case 1: TOP N Analysis
+
+--Find top highest sales for each product
+SELECT OrderID,ProductID,Sales,
+ROW_NUMBER() OVER(PARTITION BY ProductID ORDER BY Sales DESC) RankByProduct
+FROM Sales.Orders
+
+/*
+OrderID | ProductID | Sales | RankByProduct
+8       | 101       | 90    | 1
+9       | 101       | 20    | 2
+3       | 101       | 20    | 3
+1       | 101       | 10    | 4
+10      | 102       | 60    | 1
+7       | 102       | 30    | 2
+2       | 102       | 15    | 3
+6       | 104       | 50    | 1
+5       | 104       | 25    | 2
+4       | 105       | 60    | 1
+*/
+
+
+/*==============================================================
+Goal:
+Find the highest sale for each ProductID.
+
+Logic:
+1. Partition data by ProductID
+2. Rank within each product group
+3. Keep only rank = 1
+==============================================================*/
+
+SELECT *
+FROM (
+    SELECT 
+        OrderID,
+        ProductID,
+        Sales,
+        ROW_NUMBER() OVER (
+            PARTITION BY ProductID 
+            ORDER BY Sales DESC
+        ) AS RankByProduct
+    FROM Sales.Orders
+) t
+WHERE RankByProduct = 1;
+
+/*
+OrderID | ProductID | Sales | RankByProduct
+8       | 101       | 90    | 1
+10      | 102       | 60    | 1
+6       | 104       | 50    | 1
+4       | 105       | 60    | 1
+*/
+
