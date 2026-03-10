@@ -208,6 +208,7 @@ CustomerID | TotalSales | RankCustomers
 */
 
 
+
 /*==============================================================
 Goal:
 Identify customers with lowest total sales.
@@ -237,3 +238,36 @@ CustomerID | TotalSales | RankCustomers
 4          | 90         | 2
 */
 
+
+
+--USE CASE 3: Assign Unique IDs
+/*==============================================================
+Goal:
+Generate sequential unique IDs dynamically.
+
+Useful when:
+• Table lacks a primary key
+• Creating export files
+• Data migration processes
+==============================================================*/
+
+SELECT
+    ROW_NUMBER() OVER (
+        ORDER BY OrderID, OrderDate
+    ) AS UniqueID,
+    *
+FROM Sales.OrdersArchive;
+
+/*
+UniqueID | OrderID | CustomerID | ProductID | Quantity | OrderDate   | ShipDate    | OrderStatus
+1        | 1       | 101        | 2         | 3        | 2024-04-01  | 2024-04-05  | Shipped
+2        | 2       | 102        | 3         | 3        | 2024-04-05  | 2024-04-10  | Shipped
+3        | 3       | 101        | 1         | 4        | 2024-04-10  | 2024-04-25  | Shipped
+4        | 4       | 105        | 1         | 3        | 2024-04-20  | 2024-04-25  | Shipped
+5        | 4       | 105        | 1         | 3        | 2024-04-20  | 2024-04-25  | Delivered
+6        | 5       | 104        | 2         | 5        | 2024-05-01  | 2024-05-05  | Shipped
+7        | 6       | 104        | 3         | 5        | 2024-05-05  | 2024-05-10  | Delivered
+8        | 6       | 104        | 3         | 5        | 2024-05-05  | 2024-05-10  | Delivered
+9        | 6       | 101        | 3         | 5        | 2024-05-05  | 2024-05-10  | Delivered
+10       | 7       | 102        | 3         | 5        | 2024-06-15  | 2024-06-20  | Shipped
+*/
