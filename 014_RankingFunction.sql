@@ -271,3 +271,28 @@ UniqueID | OrderID | CustomerID | ProductID | Quantity | OrderDate   | ShipDate 
 9        | 6       | 101        | 3         | 5        | 2024-05-05  | 2024-05-10  | Delivered
 10       | 7       | 102        | 3         | 5        | 2024-06-15  | 2024-06-20  | Shipped
 */
+
+
+
+--Use Case 4 : identify duplicates
+
+SELECT
+    ROW_NUMBER() OVER(
+        PARTITION BY OrderID
+        ORDER BY CreationTime DESC) rn,
+    OrderID, CustomerID, OrderDate, ShipDate, OrderStatus
+FROM Sales.OrdersArchive
+
+/*
+rn | OrderID | CustomerID |  OrderDate   | ShipDate   |OrderStatus|
+1    	1	        2	    2024-04-01	   2024-04-05	Shipped
+1	    2	        3	    2024-04-05	   2024-04-10	Shipped
+1	    3	        1	    2024-04-10	   2024-04-25	Shipped
+1	    4	        1	    2024-04-20	   2024-04-25	Delivered
+2	    4	        1       2024-04-20	   2024-04-25	Shipped
+1	    5	        2	    2024-05-01	   2024-05-05	Shipped
+1	    6	        3	    2024-05-05	   2024-05-10	Delivered
+2	    6	        3	    2024-05-05     2024-05-10	Delivered
+3	    6	        3	    2024-05-05     2024-05-10	Delivered
+1	    7	        3	    2024-06-15	   2024-06-20	Shipped
+*/
