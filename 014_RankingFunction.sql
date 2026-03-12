@@ -423,3 +423,119 @@ Bucket | ProductID | OrderStatus
 */
 
 
+
+
+/*==============================================================
+PERCENTAGE-BASED RANKING FUNCTIONS
+
+These functions return values between 0 and 1.
+They help measure the relative standing of a row within a dataset.
+
+There are two main functions:
+
+1️⃣ CUME_DIST()
+   - Formula:
+       CUME_DIST = (Number of rows with value >= current value)
+/ (Total rows)
+
+   - Uses the LAST occurrence position for ties.
+   - Represents cumulative distribution.
+   - Always between (0, 1].
+
+2️⃣ PERCENT_RANK()
+   - Formula:
+       PERCENT_RANK = (Rank - 1) / (Total rows - 1)
+
+   - Uses the FIRST occurrence rank for ties.
+   - Represents relative percentile position.
+   - Always between [0, 1].
+
+Rules:
+• Expression inside function → Must be EMPTY
+• ORDER BY → REQUIRED
+• FRAME clause → NOT allowed
+==============================================================*/
+
+
+/*==============================================================
+Goal:
+Demonstrate how CUME_DIST() and PERCENT_RANK() work
+without needing a physical table.
+
+Dataset:
+100, 80, 80, 50, 30
+==============================================================*/
+
+SELECT 
+    Sales,
+    CUME_DIST() OVER (ORDER BY Sales DESC) AS Dist,
+    PERCENT_RANK() OVER (ORDER BY Sales DESC) AS Per
+FROM (
+    SELECT 100 AS Sales
+    UNION ALL SELECT 80
+    UNION ALL SELECT 80
+    UNION ALL SELECT 50
+    UNION ALL SELECT 30
+) AS temp;
+
+
+--Alternative Syntax
+SELECT 
+    Sales,
+    CUME_DIST() OVER (ORDER BY Sales DESC) AS Dist,
+    PERCENT_RANK() OVER (ORDER BY Sales DESC) AS Per
+FROM (VALUES (100), (80), (80), (50), (30)) AS temp(Sales);
+
+
+/*
+Sales	Dist	Per
+100		0.2		0
+80		0.6		0.25
+80		0.6		0.25
+50		0.8		0.75
+30		1		1
+*/
+
+/*==============================================================
+Goal:
+Find products that fall within the highest 40% of prices.
+
+Logic:
+1. Rank products by Price (highest first).
+2. Calculate cumulative distribution.
+3. Keep rows where DistRank <= 0.4
+
+Meaning:
+Select products that belong to the top 40% of price distribution.
+==============================================================*/
+
+SELECT *
+FROM (
+    SELECT
+        Product,
+        Price,
+        CUME_DIST() OVER (ORDER BY Price DESC) AS DistRank
+    FROM Sales.Products
+) t
+WHERE DistRank <= 0.4;
+
+/*
+Product	Price	DistRank
+Gloves	30		0.2
+Caps	25		0.4
+*/
+
+/*
+Rules:
+	1.Expression- Empty
+	2.ORDER BY- Required
+	3.FRAMW- Not Allowed
+
+
+Conceptual Comparision
+
+| Function       | Best For                         | Tie Handling          | Business Meaning             |
+| -------------- | -------------------------------- | --------------------- | ---------------------------- |
+| CUME_DIST()    | Distribution threshold filtering | Uses last occurrence  | “Top X% of data”             |
+| PERCENT_RANK() | Percentile reporting             | Uses first occurrence | Relative percentile position |
+*/
