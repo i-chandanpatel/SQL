@@ -2,10 +2,7 @@
    SQL SELECT OPERATIONS – COMPLETE PRACTICE FILE
    Focus: SELECT queries
    Table: customers
-   ========================================================= */
-
-
-/* =========================================================
+ =========================================================
    TABLE STRUCTURE (Reference)
    =========================================================
    id | first_name | country | score
@@ -18,15 +15,16 @@
    ========================================================= */
 
 
+
 /* =========================================================
    IMPORTANT NOTE ON QUOTES
    ---------------------------------------------------------
    'single quotes' → used for STRING literals (standard SQL)
    "double quotes" → used for identifiers (column/table names)
 
-   Some databases allow double quotes for strings, but
-   standard SQL recommends single quotes only.
+   Some databases allow double quotes for strings, but standard SQL recommends single quotes only.
    ========================================================= */
+
 
 
 /* =========================================================
@@ -36,8 +34,8 @@
    or equal to 500
    ========================================================= */
 
--- In '' we can put string(chars) and numbers
--- But in "" only String (NOT standard SQL, avoid using "")
+-- In '' we can put string and numbers
+-- But in "" only String
 
 SELECT *
 FROM customers
@@ -93,29 +91,9 @@ ORDER BY score;
 
 
 
-/* =========================================================
-   4. ORDER BY ASC (explicit)
-   Question:
-   Sort customers by score in ascending order explicitly
-   ========================================================= */
-
-SELECT first_name
-FROM customers
-ORDER BY score ASC;
-
--- Output:
--- first_name
--- ----------
--- Peter
--- Maria
--- Martin
--- Georg
--- John
-
-
 
 /* =========================================================
-   5. ORDER BY DESC
+   4. ORDER BY DESC
    Question:
    Sort customers by score in descending order
    ========================================================= */
@@ -136,7 +114,7 @@ ORDER BY score DESC;
 
 
 /* =========================================================
-   6. ORDER BY multiple columns
+   5. ORDER BY multiple columns
    Question:
    Sort first by country (ASC) and then by score (DESC)
    ========================================================= */
@@ -159,7 +137,7 @@ ORDER BY country ASC, score DESC;
 
 
 /* =========================================================
-   7. ORDER BY priority change
+   6. ORDER BY priority change
    Question:
    Sort first by score (DESC) and then by country (ASC)
    ========================================================= */
@@ -180,7 +158,7 @@ ORDER BY score DESC, country ASC;
 
 
 /* =========================================================
-   8. GROUP BY with SUM
+   7. GROUP BY with SUM
    Question:
    Find total score for each country
    ========================================================= */
@@ -202,7 +180,7 @@ GROUP BY country;
 
 
 /* =========================================================
-   9. GROUP BY with alias
+   8. GROUP BY with alias
    Question:
    Find total score for each country with alias
    ========================================================= */
@@ -221,12 +199,11 @@ GROUP BY country;
 
 
 /* =========================================================
-   10. GROUP BY rule demonstration
+   9. GROUP BY rule demonstration
    ========================================================= */
 
 -- Group by rule:
--- All columns in SELECT must be either aggregated
--- or included in GROUP BY
+-- All columns in SELECT must be either aggregated or included in GROUP BY
 
 -- ❌ This will NOT work:
 -- SELECT country, first_name, SUM(score)
@@ -251,7 +228,7 @@ GROUP BY country, first_name;
 
 
 /* =========================================================
-   11. COUNT with GROUP BY
+   10. COUNT with GROUP BY
    Question:
    Count total number of customers per country
    ========================================================= */
@@ -270,7 +247,7 @@ GROUP BY country;
 
 
 /* =========================================================
-   12. HAVING clause
+   11. HAVING
    Question:
    Filter countries having total score greater than 800
    ========================================================= */
@@ -291,10 +268,9 @@ HAVING SUM(score) > 800;
 
 
 /* =========================================================
-   13. WHERE + HAVING
+   12. WHERE + HAVING
    Question:
-   Consider customers with score > 400 and then filter
-   countries with total score > 800
+   Consider customers with score > 400 and then filter countries with total score > 800
    ========================================================= */
 
 -- WHERE filters BEFORE aggregation
@@ -313,10 +289,9 @@ HAVING SUM(score) > 800;
 
 
 /* =========================================================
-   14. AVG with conditions
+   13. AVG with conditions
    Question:
-   Exclude score = 0 and return countries whose
-   average score is greater than 430
+   Exclude score = 0 and return countries whose average score is greater than 430
    ========================================================= */
 
 SELECT country, AVG(score) AS Avg_Score
@@ -334,7 +309,7 @@ HAVING AVG(score) > 430;
 
 
 /* =========================================================
-   15. DISTINCT
+   14. DISTINCT
    Question:
    Retrieve unique list of countries
    ========================================================= */
@@ -354,7 +329,7 @@ FROM customers;
 
 
 /* =========================================================
-   16. TOP / LIMIT
+   15. TOP / LIMIT
    Question:
    Restrict number of rows returned
    ========================================================= */
